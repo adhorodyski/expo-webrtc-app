@@ -1,10 +1,12 @@
-import { Link } from "expo-router";
-import { Text } from "react-native";
+import { Stack } from "expo-router";
+import { ChatsList } from "../components/ChatsList";
 
 const Page = () => {
   return (
     <>
-      <Text>Index!</Text>
+      <Stack.Screen options={{ title: "Chats" }} />
+
+      <ChatsList />
     </>
   );
 };

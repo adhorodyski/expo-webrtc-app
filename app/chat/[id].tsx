@@ -1,10 +1,16 @@
 import { Text } from "react-native";
-import { useLocalSearchParams } from "expo-router";
+import { Stack, useLocalSearchParams } from "expo-router";
 
 const Page = () => {
   const { id } = useLocalSearchParams();
 
-  return <Text>Chat room #{id}!</Text>;
+  return (
+    <>
+      <Stack.Screen options={{ title: `Chat #${id}` }} />
+
+      <Text>Chat room #{id}!</Text>
+    </>
+  );
 };
 
 export default Page;
