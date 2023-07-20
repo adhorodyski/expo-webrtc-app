@@ -1,13 +1,12 @@
+import { Slot } from "expo-router";
+import { StyleSheet, View } from "react-native";
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View } from "react-native";
-import { Chat } from "./src/components/Chat";
 
 export default function App() {
   return (
     <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
+      <Slot />
       <StatusBar style="auto" />
-      <Chat />
     </View>
   );
 }
