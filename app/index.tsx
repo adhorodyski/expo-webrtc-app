@@ -1,12 +1,17 @@
+import { View } from "react-native";
 import { Stack } from "expo-router";
-import { ChatsList } from "../components/ChatsList";
+import { CreateRoomButton } from "../components/CreateRoomButton";
+import { JoinRoomForm } from "../components/JoinRoomForm";
 
 const Page = () => {
   return (
     <>
       <Stack.Screen options={{ title: "Chats" }} />
 
-      <ChatsList />
+      <View style={{ display: "flex", gap: 32 }}>
+        <JoinRoomForm />
+        <CreateRoomButton />
+      </View>
     </>
   );
 };

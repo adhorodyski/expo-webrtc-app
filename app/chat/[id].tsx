@@ -6,9 +6,9 @@ const Page = () => {
 
   return (
     <>
-      <Stack.Screen options={{ title: `Chat #${id}` }} />
+      <Stack.Screen options={{ title: id.toString() }} />
 
-      <Text>Chat room #{id}!</Text>
+      <Text>Chat room {id}!</Text>
     </>
   );
 };
