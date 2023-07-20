@@ -1,14 +1,20 @@
-import * as websocket from "https://deno.land/x/websocket@v0.1.4/mod.ts";
+import { serve } from "https://deno.land/std@0.150.0/http/server.ts";
+import { Server } from "https://deno.land/x/socket_io@0.1.1/mod.ts";
 
-const PORT = 8080;
+const io = new Server();
 
-const wss = new websocket.WebSocketServer(PORT);
+io.on("connection", (socket) => {
+  console.log(`Socket ${socket.id} connected`);
 
-wss.on("connection", (client) => {
-  client.on("message", (message) => {
+  socket.on("disconnect", (reason) => {
+    console.log(`Socket ${socket.id} disconnected due to ${reason}`);
+  });
+
+  socket.on("test", (message) => {
     console.log(message);
-    client.send(message);
   });
 });
 
-console.log(`WebSocket server is running at ws://localhost:${PORT} 🚀`);
+await serve(io.handler(), {
+  port: 8080,
+});
