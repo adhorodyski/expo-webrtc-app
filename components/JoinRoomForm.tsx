@@ -1,17 +1,13 @@
-import { router } from "expo-router";
-import { randomUUID } from "expo-crypto";
 import { useCallback, useState } from "react";
 import { Button, View } from "react-native";
-import { socket } from "../lib/socket";
+import { router } from "expo-router";
 import { TextInput } from "react-native-gesture-handler";
 
 export const JoinRoomForm = () => {
   const [roomId, setRoomId] = useState("");
 
   const joinRoom = useCallback(() => {
-    const id = randomUUID();
-    socket.emit("join-room", { roomId });
-    router.push(`/chat/${id}`);
+    router.push(`/chat/${roomId}`);
   }, [roomId]);
 
   return (
