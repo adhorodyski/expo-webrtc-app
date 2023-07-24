@@ -22,31 +22,31 @@ io.on("connection", (socket) => {
     console.log(`Socket ${socket.id} disconnected due to ${reason}`);
   });
 
-  socket.on("join-room", (message: { roomId: string; userId: string }) => {
-    const room = rooms.get(message.roomId);
+  socket.on("join-room", (roomId: string) => {
+    const room = rooms.get(roomId);
 
     // If the room doesn't exist, create one
     if (!room) {
-      rooms.set(message.roomId, {
-        owner: message.userId,
+      rooms.set(roomId, {
+        owner: socket.id,
         guest: null,
       });
 
-      console.log(`Created room: ${message.roomId}`);
+      console.log(`Created room: ${roomId}`);
 
       return;
     }
 
     // If the room exists, join it as a guest
-    rooms.set(message.roomId, {
+    rooms.set(roomId, {
       owner: room.owner,
-      guest: message.userId,
+      guest: socket.id,
     });
 
-    console.log(`Joined room: ${message.roomId}`);
+    console.log(`Joined room: ${roomId}`);
 
     // Notify the other user that someone has joined the room
-    const otherUser = room.owner === message.userId ? room.guest : room.owner;
+    const otherUser = room.owner === socket.id ? room.guest : room.owner;
 
     if (!otherUser) return;
 
