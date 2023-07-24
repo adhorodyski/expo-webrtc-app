@@ -17,7 +17,7 @@ export const JoinRoomForm = () => {
         onChangeText={setRoomId}
         style={{ padding: 16, backgroundColor: "#f8f8f8" }}
       />
-      <Button title="Join room" onPress={joinRoom} />
+      <Button title="Join room" onPress={joinRoom} disabled={!roomId} />
     </View>
   );
 };
