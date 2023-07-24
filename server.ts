@@ -3,6 +3,10 @@ import { Server } from "https://deno.land/x/socket_io@0.1.1/mod.ts";
 
 const io = new Server();
 
+/**
+ * A map of room IDs to room objects.
+ * Each room object contains the owner's socket ID and the guest's socket ID.
+ */
 const rooms = new Map<
   string,
   {
@@ -18,49 +22,52 @@ io.on("connection", (socket) => {
     console.log(`Socket ${socket.id} disconnected due to ${reason}`);
   });
 
-  socket.on("create-room", (message) => {
-    const roomExists = rooms.has(message.roomId);
-
-    if (roomExists) return;
-
-    rooms.set(message.roomId, {
-      owner: message.userId,
-      guest: null,
-    });
-
-    console.info(`Room ${message.roomId} created.`);
-  });
-
-  socket.on("join-room", (message) => {
+  socket.on("join-room", (message: { roomId: string; userId: string }) => {
     const room = rooms.get(message.roomId);
 
-    if (!room) return;
+    // If the room doesn't exist, create one
+    if (!room) {
+      rooms.set(message.roomId, {
+        owner: message.userId,
+        guest: null,
+      });
 
+      console.log(`Created room: ${message.roomId}`);
+
+      return;
+    }
+
+    // If the room exists, join it as a guest
     rooms.set(message.roomId, {
       owner: room.owner,
       guest: message.userId,
     });
+
+    console.log(`Joined room: ${message.roomId}`);
+
+    // Notify the other user that someone has joined the room
+    const otherUser = room.owner === message.userId ? room.guest : room.owner;
+
+    if (!otherUser) return;
+
+    io.emit("other-user", otherUser);
+    io.to(otherUser).emit("user-joined", socket.id);
   });
 
-  /*
-    The initiating peer offers a connection
-  */
+  // The initiating peer offers a connection
   socket.on("offer", (payload) => {
     io.to(payload.target).emit("offer", payload);
   });
 
-  /*
-    The receiving peer answers (accepts) the offer
-  */
+  // The receiving peer answers (accepts) the offer
   socket.on("answer", (payload) => {
     io.to(payload.target).emit("answer", payload);
   });
 
+  // The initiating peer sends an ICE candidate to the receiving peer
   socket.on("ice-candidate", (incoming) => {
     io.to(incoming.target).emit("ice-candidate", incoming.candidate);
   });
 });
 
-await serve(io.handler(), {
-  port: 8080,
-});
+await serve(io.handler(), { port: 8080 });
