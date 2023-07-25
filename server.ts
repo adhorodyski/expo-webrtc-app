@@ -32,7 +32,7 @@ io.on("connection", (socket) => {
         guest: null,
       });
 
-      console.log(`Created room: ${roomId}`);
+      console.log(`Created room: ${roomId}`, rooms.get(roomId));
 
       return;
     }
@@ -43,14 +43,14 @@ io.on("connection", (socket) => {
       guest: socket.id,
     });
 
-    console.log(`Joined room: ${roomId}`);
+    console.log(`Joined room: ${roomId}`, rooms.get(roomId));
 
     // Notify the other user that someone has joined the room
     const otherUser = room.owner === socket.id ? room.guest : room.owner;
 
     if (!otherUser) return;
 
-    io.emit("other-user", otherUser);
+    socket.emit("other-user", otherUser);
     io.to(otherUser).emit("user-joined", socket.id);
   });
 
